@@ -3,13 +3,53 @@ package guru.springframework;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 public class MoneyTest {
 
     @Test
     void testMultiplication() {
-        Dollar five = new Dollar(5);
-        five.times(2);
-        assertEquals(10, five.getAmount());
+        // USD
+        Money five = Money.dollar(5);
+
+        assertEquals(Money.dollar(10), five.times(2));
+        assertEquals(Money.dollar(15), five.times(3));
+
+        // CHF
+        Money fiveFranc = Money.franc(5);
+
+        assertEquals(Money.franc(10), fiveFranc.times(2));
+        assertEquals(Money.franc(15), fiveFranc.times(3));
+    }
+
+    @Test
+    void testEquality() {
+        // USD
+        assertEquals(Money.dollar(5), Money.dollar(5));
+        assertNotEquals(Money.dollar(5), Money.dollar(10));
+
+        // Side-by-side
+        assertNotEquals(Money.dollar(5), Money.franc(5));
+
+        // CHF
+        assertEquals(Money.franc(5), Money.franc(5));
+        assertNotEquals(Money.franc(5), Money.franc(10));
+    }
+
+    @Test
+    void testCurrency() {
+        assertEquals("USD", Money.dollar(1).currency());
+        assertEquals("CHF", Money.franc(1).currency());
+    }
+
+    @Test
+    void testAddition() {
+        Money fiveDollar = Money.dollar(5);
+        Expression sum = fiveDollar.plus(fiveDollar);
+
+        Bank bank = new Bank();
+        Money reduced = bank.reduce(sum, "USD");
+
+        assertEquals(Money.dollar(10), reduced);
     }
 }
