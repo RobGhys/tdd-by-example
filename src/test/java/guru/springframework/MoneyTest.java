@@ -52,4 +52,46 @@ public class MoneyTest {
 
         assertEquals(Money.dollar(10), reduced);
     }
+
+    @Test
+    void testPlusReturnsSum() {
+        Money fivedollar = Money.dollar(5);
+        Expression result = fivedollar.plus(fivedollar);
+        Sum sum = (Sum) result;
+
+        assertEquals(fivedollar, sum.getAugmend());
+        assertEquals(fivedollar, sum.getAddmend());
+    }
+
+    @Test
+    void testReduceSum() {
+        Expression sum = new Sum(Money.dollar(3), Money.dollar(4));
+        Bank bank = new Bank();
+        Money result = bank.reduce(sum, "USD");
+
+        assertEquals(Money.dollar(7), result);
+    }
+
+    @Test
+    void testReduceMoney() {
+        Bank bank = new Bank();
+        Money result = bank.reduce(Money.dollar(1), "USD");
+
+        assertEquals(Money.dollar(1), result);
+    }
+
+    @Test
+    void testReduceMoneyDifferentCurrency() {
+        Bank bank = new Bank();
+        bank.addRate("CHF", "USD", 2);
+        Money result = bank.reduce(Money.franc(2), "USD");
+
+        assertEquals(Money.dollar(1), result);
+    }
+
+    @Test
+    void testIdentityRate() {
+        assertEquals(1, new Bank().rate("USD", "USD"));
+        assertEquals(1, new Bank().rate("CHF", "CHF"));
+    }
 }
