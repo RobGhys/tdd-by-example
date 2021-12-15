@@ -34,7 +34,8 @@ public class Money implements Expression {
         return new Money(this.amount / bank.rate(this.currency, toCurrency), toCurrency);
     }
 
-    public Money times(int multiplier) {
+    @Override
+    public Expression times(int multiplier) {
         return new Money(amount * multiplier, this.currency);
     }
 
@@ -46,7 +47,8 @@ public class Money implements Expression {
         this.amount = amount;
     }
 
-    public Expression plus(Money addend) {
+    @Override
+    public Expression plus(Expression addend) {
         return new Sum(this, addend);
     }
 
